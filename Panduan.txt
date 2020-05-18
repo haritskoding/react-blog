@@ -40,6 +40,8 @@ mongoose.connect('mongodb+srv://aris:ArisElda21@cluster0-9phcz.mongodb.net/test?
 dan nyalakan ulang dengan node index.js
 
 ======   1.3  Membuat Model user di folder -model -user.js===============
+
+
 1.3.1 buat file user.js didalam folder model
 1.3.2 isi dengan kode dibawah ini :
 const mongoose = require('mongoose');
@@ -78,3 +80,139 @@ const userSchema = mongoose.Schema({
 const User = mongoose.model('User',userSchema)
 
 module.exports = {User}
+
+
+++++++++++++++++++++++++++++++++++
+
+PART 2 Menghubungkan Ke git
+++++++++++++++++++++++++++++++++++
+
+2.1 Setting GIT di komputer anda
+
+1. Pertama2 git init untuk menginisiasi git
+2. lalu tambahkan file .gitignore dan isi code berikut : 
+/node_modules
+/build
+
+.DS_Store
+
+npm-debug.log*
+yarn-deebug.kog*
+yarn-error.log*
+
+.vscode
+
+3. setelah itu git add .
+4. setelah itu git commit -m "Tulis Pesan"
+
+2.2 Setting SSH pada laptop dan setting SSH anad GPG di github.com
+
+1. harus buka gitbash
+2. cd C:/Users/<Nama Users>/.ssh
+3. ssh-keygen -t rsa
+4. beri nama id_rsa): contoh
+5. dir
+6. cat contoh.pub
+7. Masuk ke web git ->setting->ssh and GPG Keys -> Title isi dengan contoh ->dan isi ssh key
+selsesai
+
+2.3 lalu kita push ke git
+pada cmd di git isi
+git remote add origin https://github.com/haritskoding/react-blog.git
+dan git push -u origin master
+
+
++++++++++++++++++++++++++++++++++++++++
+
+PART 3 Register Function dengan POSTMAN
++++++++++++++++++++++++++++++++++++++++
+
+1. set up terlebih dahulu ya
+npm install body-parser --save
+npm install cookie-parser --save
+
+
+dan file index.js menjadi
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+const {User} = require('./model/user');
+
+mongoose.connect('mongodb+srv://aris:ArisElda21@cluster0-9phcz.mongodb.net/test?retryWrites=true&w=majority',
+{useNewUrlParser:true}).
+              then(()=>console.log('DB connected')).
+              catch(err=>console.log(error));
+
+
+
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.post('/api/users/register',(req,res)=>{
+    const user = new User(req.body)
+    user.save((err,userData)=>{
+        if(err) return res.json({
+            success:false,err
+        });
+        return res.status(200).json({
+            success:true
+        })
+    });
+   
+})
+
+app.listen(5000);
+
++++++++++++++++++++++++++++++++++++++++
+
+PART 4 SET UP Nodemon
++++++++++++++++++++++++++++++++++++++++
+npm install nodemon --save-dev
+dan cocokan index.js sepert
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+const {User} = require('./model/user');
+
+mongoose.connect('mongodb+srv://aris:ArisElda21@cluster0-9phcz.mongodb.net/test?retryWrites=true&w=majority',
+{useNewUrlParser:true}).
+              then(()=>console.log('DB connected')).
+              catch(err=>console.log(error));
+
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.get('/',(req,res)=>{
+    res.json({"hallo dunia":"Falkon pala kont"})
+})
+
+app.post('/api/users/register',(req,res)=>{
+    const user = new User(req.body)
+    user.save((err,userData)=>{
+        if(err) return res.json({
+            success:false,err
+        });
+        return res.status(200).json({
+            success:true
+        })
+    });
+   
+})
+
+app.listen(5000);
+
+dan tambahkan script beriku 
+ "scripts": {
+    "start": "node index.js",
+     "backend":"nodemon index.js"
+  }
